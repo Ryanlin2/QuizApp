@@ -8,14 +8,17 @@
 import SwiftUI
 
 struct ContentView: View {
+    @State private var question = Question(
+        problem: "What does iOS stand for?",
+        answerChoice: [
+            Answer(text: "iPhone Operating System", isCorrect: true),
+            Answer(text: "Internet Operating System", isCorrect: false),
+            Answer(text: "Information Operating System", isCorrect: false),
+            Answer(text: "Intelligent Operating System", isCorrect: false)
+        ]
+    )
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
-        }
-        .padding()
+        QuestionView(question: question)
     }
 }
 
