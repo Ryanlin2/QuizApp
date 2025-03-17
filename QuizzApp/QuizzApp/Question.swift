@@ -11,6 +11,7 @@ struct Question : Identifiable {
     let id = UUID()
     let problem: String
     let answerChoice: [Answer]
+    var answered = false
 }
 
 

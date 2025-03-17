@@ -8,13 +8,20 @@
 import SwiftUI
 
 struct QuestionView: View {
-    let question: Question
+    @State var question: Question
     @State private var columns = [GridItem(.flexible()), GridItem(.flexible())]
+    
+    public func answer(correctness: Bool)->Bool{
+        if (correctness){
+            return true
+        }
+        return false
+    }
 
     var body: some View {
         VStack(spacing: 20) {
             
-            Text("Quizz App")
+            Text("IOS Quiz")
                 .font(.largeTitle)
                 .bold()
                 .foregroundColor(.blue)
@@ -31,6 +38,8 @@ struct QuestionView: View {
             LazyVGrid(columns: columns, spacing: 20) {
                 ForEach(question.answerChoice) { choice in
                     Button(action: {
+                        question.answered=true
+                        print(question.answered)
                         print(choice.isCorrect)
                     }) {
                         Text(choice.text)
