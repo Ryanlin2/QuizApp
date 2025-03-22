@@ -8,20 +8,24 @@
 import SwiftUI
 
 struct ContentView: View {
-    @State private var question = Question(
-        problem: "What does iOS stand for?",
-        answerChoice: [
-            Answer(text: "iPhone Operating System", isCorrect: true),
-            Answer(text: "Internet Operating System", isCorrect: false),
-            Answer(text: "Information Operating System", isCorrect: false),
-            Answer(text: "Intelligent Operating System", isCorrect: false)
-        ]
-    )
+    
+    @State private var started = false
+    
+    @State private var questions = QuizMaintainer().questions
     var body: some View {
-        QuestionView(question: question)
+        
+        if !started {
+            WelcomeView(startGame: $started)
+                .transition(.slide)
+        }
+        else {
+            QuestionView(question: questions[0])
+        }
+    
     }
 }
 
 #Preview {
     ContentView()
+        .environment(QuizMaintainer().self)
 }
