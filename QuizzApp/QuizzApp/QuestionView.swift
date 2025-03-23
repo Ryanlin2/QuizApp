@@ -10,8 +10,8 @@ import SwiftUI
 struct QuestionView: View {
     
     let question: Question
+    var quiz = QuizMaintainer()
     @State private var columns = [GridItem(.flexible()), GridItem(.flexible())]
-    @Environment(QuizMaintainer.self) var quiz: QuizMaintainer
     @State private var shakeUnits: CGFloat = 0
     @State private var scale : CGFloat = 1.0
     @State private var selectedChoice: UUID?
@@ -37,31 +37,39 @@ struct QuestionView: View {
             Spacer()
             
             LazyVGrid(columns: columns, spacing: 20) {
-                ForEach(question.answerChoice) { choice in
+                ForEach(question.answerChoice, id: \.self.id) { choice in
                     ChoiceView(
                         choice: choice,
                         selectedChoice: selectedChoice,
                         isCorrect: isCorrect,
+                        scale: scale,
                         isShaking: isShaking
                     )
                         .onTapGesture {
                             selectedChoice = choice.id
                             if choice.isCorrect {
                                 isCorrect = true
-                                quiz.score += 1
+                                quiz.correctScore += 1
                                 print("true")
                                 
                                 withAnimation(.easeOut(duration: 0.5)) {
                                     ampilfyanimation = true
-                                    scale = 2
+                                    scale = 4.0
                                 }
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                                    quiz.nextQuestion()
+                                
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
                                     ampilfyanimation = false
+                                    quiz.nextQuestion()
+                                    withAnimation(.easeIn(duration: 0.3)){
+                                        scale = 1.0
+                                    }
+                                    selectedChoice = nil
                                 }
                             }
                             else {
+                                isCorrect = false 
                                 print("false")
+                                quiz.incorrectScore += 1
                                 withAnimation(.default.repeatCount(2, autoreverses: true)) {
                                     isShaking = true
                                 }
@@ -88,6 +96,7 @@ struct ChoiceView: View {
     let selectedChoice: UUID?
     let shakeUnits: CGFloat = 10
     let isCorrect: Bool
+    let scale: CGFloat
     let isShaking: Bool
     
     var body: some View {
@@ -100,6 +109,7 @@ struct ChoiceView: View {
             .shadow(radius: 5)
             .clipShape(Capsule())
             .modifier(choice.id == selectedChoice && isShaking ? ShakeEffect(animatableData: shakeUnits) : ShakeEffect(animatableData: 0))
+            .scaleEffect(scale, anchor: .leading)
     }
     
     func backgroundColor(for choice: Answer) -> Color {

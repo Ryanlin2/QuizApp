@@ -10,16 +10,19 @@ import SwiftUI
 struct ContentView: View {
     
     @State private var started = false
-    
-    @State private var questions = QuizMaintainer().questions
+    @State private var finished = false
+    @Environment(QuizMaintainer.self) var quiz: QuizMaintainer
     var body: some View {
         
         if !started {
             WelcomeView(startGame: $started)
                 .transition(.slide)
         }
+        else if quiz.showScore {
+            FinishView(quiz: quiz)
+        }
         else {
-            QuestionView(question: questions[0])
+            QuestionView(question: quiz.questions[quiz.currentIndex], quiz: quiz)
         }
     
     }

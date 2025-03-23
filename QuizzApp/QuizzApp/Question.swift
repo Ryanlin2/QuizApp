@@ -24,7 +24,9 @@ struct Answer : Identifiable {
 class QuizMaintainer {
     var questions: [Question] = []
     var currentIndex: Int = 0
-    var score: Int = 0
+    var correctScore: Int = 0
+    var incorrectScore: Int = 0
+    var totalScore: Double = 0
     var showScore: Bool = false
     
     init() {
@@ -63,15 +65,11 @@ class QuizMaintainer {
                      ])
         ]
         
-        // starting points for questions
         questions.shuffle()
-        currentIndex = 0
-        score = 0
-        showScore = false
     }
     
     func nextQuestion() {
-        if currentIndex + 1 < questions.count - 1 {
+        if currentIndex + 1 < questions.count {
             currentIndex += 1
         }
         else {
