@@ -66,6 +66,9 @@ class QuizMaintainer {
         ]
         
         questions.shuffle()
+        currentIndex = 0
+        incorrectScore = 0
+        showScore = false
     }
     
     func nextQuestion() {

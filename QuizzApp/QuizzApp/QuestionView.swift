@@ -54,7 +54,7 @@ struct QuestionView: View {
                                 
                                 withAnimation(.easeOut(duration: 0.5)) {
                                     ampilfyanimation = true
-                                    scale = 4.0
+                                    scale = 10.0
                                 }
                                 
                                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
@@ -72,11 +72,11 @@ struct QuestionView: View {
                                 quiz.incorrectScore += 1
                                 withAnimation(.default.repeatCount(2, autoreverses: true)) {
                                     isShaking = true
-                                }
-                                
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                                    isShaking = false
-                                    selectedChoice = nil
+                                } completion : {
+                                    withAnimation(.default) {
+                                        isShaking = false
+                                        selectedChoice = nil
+                                    }
                                 }
                             }
                         }
@@ -108,8 +108,9 @@ struct ChoiceView: View {
             .background(Capsule().fill(!isCorrect ? Color.red : Color.blue))
             .shadow(radius: 5)
             .clipShape(Capsule())
+            .scaleEffect(scale, anchor: .bottom)
             .modifier(choice.id == selectedChoice && isShaking ? ShakeEffect(animatableData: shakeUnits) : ShakeEffect(animatableData: 0))
-            .scaleEffect(scale, anchor: .leading)
+            //.modifier(choice.id == selectedChoice && !isShaking ? scaleEffect(scale: 1.1) : scaleEffect(scale: 1))
     }
     
     func backgroundColor(for choice: Answer) -> Color {
@@ -128,7 +129,7 @@ struct ShakeEffect: GeometryEffect {
     func effectValue(size: CGSize) -> ProjectionTransform {
         let translationX = 10 * sin(animatableData * .pi * CGFloat(3))
         return ProjectionTransform(
-            CGAffineTransform(translationX: translationX, y: 30)
+            CGAffineTransform(translationX: translationX, y: sin(animatableData * .pi * CGFloat(3)))
         )
     }
 }
