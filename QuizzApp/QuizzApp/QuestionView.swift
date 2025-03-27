@@ -37,6 +37,7 @@ struct QuestionView: View {
             Spacer()
             
             LazyVGrid(columns: columns, spacing: 20) {
+                
                 ForEach(question.answerChoice, id: \.self.id) { choice in
                     ChoiceView(
                         choice: choice,
@@ -54,7 +55,7 @@ struct QuestionView: View {
                                 
                                 withAnimation(.easeOut(duration: 0.5)) {
                                     ampilfyanimation = true
-                                    scale = 10.0
+                                    scale = 20.0
                                 }
                                 
                                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
@@ -67,21 +68,23 @@ struct QuestionView: View {
                                 }
                             }
                             else {
-                                isCorrect = false 
+                                isCorrect = false
                                 print("false")
                                 quiz.incorrectScore += 1
-                                withAnimation(.default.repeatCount(2, autoreverses: true)) {
+                                withAnimation(.default.repeatCount(1, autoreverses: true)) {
                                     isShaking = true
-                                } completion : {
-                                    withAnimation(.default) {
-                                        isShaking = false
-                                        selectedChoice = nil
-                                    }
+                                }
+                                
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                                    isShaking = false
+                                    selectedChoice = nil
                                 }
                             }
                         }
                 }
             }
+            Spacer()
+            Spacer()
         }
         .padding()
         .background(Color(.systemGray6))
@@ -108,9 +111,9 @@ struct ChoiceView: View {
             .background(Capsule().fill(!isCorrect ? Color.red : Color.blue))
             .shadow(radius: 5)
             .clipShape(Capsule())
-            .scaleEffect(scale, anchor: .bottom)
             .modifier(choice.id == selectedChoice && isShaking ? ShakeEffect(animatableData: shakeUnits) : ShakeEffect(animatableData: 0))
-            //.modifier(choice.id == selectedChoice && !isShaking ? scaleEffect(scale: 1.1) : scaleEffect(scale: 1))
+            .scaleEffect(choice.id == selectedChoice && isCorrect ? scale : 1.0, anchor: .bottom)
+                    .animation(.spring(response: 0.5, dampingFraction: 0.5, blendDuration: 0.5), value: choice.id == selectedChoice && isCorrect)
     }
     
     func backgroundColor(for choice: Answer) -> Color {
@@ -129,7 +132,7 @@ struct ShakeEffect: GeometryEffect {
     func effectValue(size: CGSize) -> ProjectionTransform {
         let translationX = 10 * sin(animatableData * .pi * CGFloat(3))
         return ProjectionTransform(
-            CGAffineTransform(translationX: translationX, y: sin(animatableData * .pi * CGFloat(3)))
+            CGAffineTransform(translationX: translationX, y: 30)
         )
     }
 }
